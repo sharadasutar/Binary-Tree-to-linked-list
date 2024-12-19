@@ -30,42 +30,43 @@ Convert the below tree structure into a linked list structure, whereas the linke
 //Binary Tree node structure
 
 typedef struct TreeNode {
-    int data;
-    struct TreeNode* left;
-    struct TreeNode* right;
+    int data;                              //data in the tree node
+    struct TreeNode* left;                //pointer to the left child
+    struct TreeNode* right;                     //pointer to the right child
 }TreeNode;
 
 
 //Linked List Node structure
 
 typedef struct ListNode {
-    int data;
-    struct ListNode* next;
+    int data;                                //data in the linked listnode
+    struct ListNode* next;                  //pointer to the next node
 }ListNode;
 
 
 //Queue Node structure for BFS
 
 typedef struct QueueNode {
-    TreeNode* treeNode;
-    struct QueueNode* next;
+    TreeNode* treeNode;                             //pointer to the treenode
+    struct QueueNode* next;                          //pointer to the next queue node
 } QueueNode;
 
 
 //Queue structure
 
 typedef struct Queue {
-    QueueNode* front;
-    QueueNode* rear;
+    QueueNode* front;                              //pointer to the front of the queue
+    QueueNode* rear;                               //pointer to the rear of the queue
 } Queue;
 
 
 //Function to create a new TreeNode
 TreeNode* createTreeNode(int data) {
-    TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));
-    newNode->data = data;
-    newNode->left =NULL;
-    newNode->right = NULL;
+    TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));                
+
+    newNode->data = data;                         //set the data
+    newNode->left =NULL;                         //initialize left child as NULL
+    newNode->right = NULL;                  //initialize the right child as NULL
     return newNode;
 }
 
@@ -74,8 +75,8 @@ TreeNode* createTreeNode(int data) {
 
 ListNode* createListNode(int data) {
     ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
-    newNode->data = data;
-    newNode->next = NULL;
+    newNode->data = data;             //set the data 
+    newNode->next = NULL;            //initialize next pointer as NULL
     return newNode;
 }
 
@@ -84,8 +85,8 @@ ListNode* createListNode(int data) {
 
 QueueNode* createQueueNode(TreeNode* treeNode) {
     QueueNode* newNode =  (QueueNode*)malloc(sizeof(QueueNode));
-            newNode->treeNode = treeNode;
-            newNode->next = NULL;
+            newNode->treeNode = treeNode;             //set the tree node
+            newNode->next = NULL;                //initialize next pointer as NULL
             return newNode;
 }
             
@@ -93,45 +94,45 @@ QueueNode* createQueueNode(TreeNode* treeNode) {
 //Function to create an empty queue
 Queue* createQueue() {
     Queue* q = (Queue*)malloc(sizeof(Queue));
-    q->front = NULL;
-    q->rear = NULL;
+    q->front = NULL;                 //initialize front as NULL
+    q->rear = NULL;              //initialize rear as NULL
     return q;
 }
 
 
 //Function to Enqueue a tree node into the queue
 void enqueue(Queue* q, TreeNode* treeNode) {
-    QueueNode* newNode =  createQueueNode(treeNode);
-    if(q->rear == NULL)
+    QueueNode* newNode =  createQueueNode(treeNode);              //create a new queue node
+    if(q->rear == NULL)                           //if the queue is empty
     {
-        q->front = q->rear = newNode;
+        q->front = q->rear = newNode;               //front and rear point to the new node
         return;
     }
-    q->rear->next = newNode;
-    q->rear = newNode;
+    q->rear->next = newNode;       //add newnode to the end of the queue
+    q->rear = newNode;            //update the rear pointer
 
 }
 
 
 //Function to Dequeue a tree node from the queue
 TreeNode* dequeue(Queue* q) {
-    if(q->front == NULL)
+    if(q->front == NULL)             //if the queue is empty return NULL
         return NULL;
-    QueueNode* temp = q->front;
-    TreeNode* treeNode = temp->treeNode;
-    q->front = q->front->next;
-    if(q->front == NULL)
+    QueueNode* temp = q->front;           //get the front node
+    TreeNode* treeNode = temp->treeNode;            //get the tree node
+    q->front = q->front->next;                  //update the front pointer
+    if(q->front == NULL)         
     
-        q->rear = NULL;
+        q->rear = NULL;           //if the queue is now empty update rear
     
-    free(temp);
-    return treeNode;
+    free(temp);                  //free dequeued node
+    return treeNode;          //return treenode            
 }
 
 
 //check if the queue is empty
 int isQueueEmpty(Queue* q) {
-    return q->front == NULL;
+    return q->front == NULL;             //return 1 if empty, 0 otherwise
 }
 
 
@@ -139,28 +140,29 @@ int isQueueEmpty(Queue* q) {
 
 ListNode* treeToLinkedList(TreeNode* root) {
     if(!root)
-        return NULL;
+        return NULL;           //if tree is empty return NULL
 
-    Queue* q = createQueue();
-    enqueue(q, root);
+    Queue* q = createQueue();          //create a queue for BFS
+    enqueue(q, root);                //Enqueue the root node
 
-    ListNode* head = NULL;
-    ListNode* tail = NULL;
+    ListNode* head = NULL;        //initialize the linked list head
+    ListNode* tail = NULL;        //initialize the linked list tail
 
-    while (!isQueueEmpty(q)) {
-        TreeNode* current = dequeue(q);
+    while (!isQueueEmpty(q))    //while the queue is not empty
+    {       
+        TreeNode* current = dequeue(q);    //dequeue a tree node
 
         //create a new list node for the linked list
         ListNode* newNode = createListNode(current->data);
-        if(!head) 
+        if(!head)       //if this is the first node
         {
-            head = newNode;
+            head = newNode;      //set it as the head
         }
         else
         {
-            tail->next = newNode;
+            tail->next = newNode;          //link it to the tail
         }
-        tail = newNode;
+        tail = newNode;                //update the tail pointer
 
         //Enqueue left and right children of the current tree node
         if(current->left) 
@@ -168,37 +170,35 @@ ListNode* treeToLinkedList(TreeNode* root) {
         
         if(current->right) 
             enqueue(q,current->right);
-        
 
     }
 
-
-        return head;
+        return head;        //return the head of the linked list
 }
 
 //Function to print linked list
 void printLinkedList(ListNode* head)
 {
-    ListNode* temp = head;
-    while(temp) {
-        printf("%d", temp->data);
+    ListNode* temp = head;             //start with the head node
+    while(temp) {                //traverse until the end
+        printf("%d", temp->data);             //print the current node's data
         if(temp->next)
         {
-            printf(" => ");
+            printf(" => ");         //print arrow if not the last node
         }
-        temp = temp->next;
+        temp = temp->next;          //move to the next node
     }
-    printf("\n");
+    printf("\n");           //print the newline at the end
 }
 
 //Function to create a sample binary tree for demonstration
 
 TreeNode* createSampleTree() {
-    TreeNode* root = createTreeNode(1);
+    TreeNode* root = createTreeNode(1);         //create the root node
 
-    root->left = createTreeNode(2);
+    root->left = createTreeNode(2);        //create left child
 
-    root->right = createTreeNode(3);
+    root->right = createTreeNode(3);         //create right child
 
     root->left->left =  createTreeNode(4);
 
@@ -231,10 +231,12 @@ TreeNode* createSampleTree() {
 //main function
 int main()
 {
-    TreeNode* root =  createSampleTree();
-    ListNode* linkedList = treeToLinkedList(root);
+    TreeNode* root =  createSampleTree();           //create a sample binary tree
+    ListNode* linkedList = treeToLinkedList(root);          //convert to linked list
     printf("Linked List: ");
-    printLinkedList(linkedList);
+    printLinkedList(linkedList);            //print the linked list
     return 0;
 }
+
+
    
